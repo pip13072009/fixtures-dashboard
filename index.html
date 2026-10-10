@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dan's Fixtures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f2;--panel:#ffffff;--fg:#1d1d1b;--muted:#6b6a64;--line:#e4e2da;
+  --home:rgba(46,160,90,.14);--home-edge:rgba(46,160,90,.45);
+  --saints:#1b6b45;--lightning:#d99a00;--avs:#7a2846;--chelsea:#0b4fa8;--arsenal:#d11a1a;
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--serif:"Source Serif 4",Georgia,serif;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#161614;--panel:#1f1f1c;--fg:#ecebe6;--muted:#a3a29b;--line:#34332f;
+  --home:rgba(70,200,120,.16);--home-edge:rgba(70,200,120,.5);
+  --saints:#3fae7a;--lightning:#f0b72c;--avs:#c25a80;--chelsea:#5b9cf0;--arsenal:#f05252;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.45}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;gap:20px}
+h1{font-family:var(--serif);font-weight:400;font-size:2rem;margin:0}
+.take{margin:4px 0 0;color:var(--muted)}
+.updated{font-size:.8rem;color:var(--muted);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:.85rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed=false]{opacity:.4}
+.dot{width:.6rem;height:.6rem;border-radius:50%;display:inline-block;flex:none}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-top-width:4px;border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:4px;min-height:9.5rem}
+.card .t{font-size:.8rem;color:var(--muted)}
+.card .o{font-family:var(--serif);font-size:1.2rem;line-height:1.25}
+.card .w{font-variant-numeric:tabular-nums}
+.card .c,.card .l{font-size:.8rem;color:var(--muted)}
+.card .tv{font-size:.8rem}
+.card .l{margin-top:auto}
+.tag{font-size:.75rem;font-weight:600;align-self:flex-start;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--avs) 20%,transparent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.panel h2{font-size:1.05rem;font-weight:500;margin:0}
+.note{font-size:.8rem;color:var(--muted);margin:4px 0 10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:.9rem;height:.9rem;border-radius:3px;border:1px solid var(--line)}
+.legend .lh{background:var(--home)}
+.legend .la{box-shadow:inset 4px 0 0 var(--avs)}
+.scroll{max-height:34rem;overflow:auto;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;background:var(--panel);text-align:left;font-weight:500;font-size:.8rem;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line);z-index:1}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap}
+tr.newday td{border-top:2px solid var(--line)}
+tr.home td{background:var(--home)}
+tr.watch td:first-child{box-shadow:inset 4px 0 0 var(--avs);font-weight:600}
+.err{color:var(--muted);padding:24px;text-align:center}
+@media (max-width:600px){.hide-sm{display:none}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Dan's fixtures</h1>
+    <p class="take" id="take">Loading…</p>
+    <div class="updated" id="updated"></div>
+  </header>
+  <div class="chips" id="chips"></div>
+  <section class="cards" id="cards"></section>
+  <section class="panel">
+    <h2>Coming up</h2>
+    <div class="note">All times UK. TV shown only where a channel is confirmed; Lightning games aren't covered. Tap a team above to hide or show it.</div>
+    <div class="legend"><span><i class="lh"></i>Home game</span><span><i class="la"></i>Avalanche puck drop outside midnight–5am</span></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>When</th><th>Team</th><th>Opponent</th><th>TV</th><th class="hide-sm">Competition</th></tr></thead>
+        <tbody id="body"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+(async function(){
+  const TEAMS=[
+    {name:"Northampton Saints",short:"Saints",color:"--saints"},
+    {name:"MK Lightning",short:"Lightning",color:"--lightning"},
+    {name:"Colorado Avalanche",short:"Avalanche",color:"--avs"},
+    {name:"Chelsea",short:"Chelsea",color:"--chelsea"},
+    {name:"Arsenal Women",short:"Arsenal Women",color:"--arsenal"}];
+  const byName=Object.fromEntries(TEAMS.map(t=>[t.name,t]));
+  const col=n=>`var(${byName[n]?.color||'--muted'})`;
+  const on=new Set(TEAMS.map(t=>t.name));
+  const tz='Europe/London';
+  const dayF=new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric',month:'short'});
+  const timeF=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit'});
+  const hourF=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'numeric',hourCycle:'h23'});
+  const stampF=new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const when=r=>{const d=new Date(r.kickoff_utc);return dayF.format(d)+' · '+(r.time_tbc?'time TBC':timeF.format(d));};
+  const watchable=r=>r.team==='Colorado Avalanche'&&!r.time_tbc&&+hourF.format(new Date(r.kickoff_utc))>=5;
+  const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+  const $=id=>document.getElementById(id);
+
+  let fixtures=[],results=[];
+  try{
+    const bust='?v='+Date.now();
+    const [f,r,m]=await Promise.all(['data/fixtures.json','data/results.json','data/meta.json'].map(p=>fetch(p+bust).then(x=>x.ok?x.json():null)));
+    fixtures=f||[];results=r||[];
+    if(m&&m.updated)$('updated').textContent='Updated '+stampF.format(new Date(m.updated));
+  }catch(e){$('take').textContent='Couldn’t load the fixtures.';return;}
+
+  TEAMS.forEach(t=>{const b=el('button','chip');b.setAttribute('aria-pressed','true');
+    const d=el('span','dot');d.style.background=col(t.name);b.append(d,document.createTextNode(t.short));
+    b.addEventListener('click',()=>{on.has(t.name)?on.delete(t.name):on.add(t.name);b.setAttribute('aria-pressed',on.has(t.name));draw();});
+    $('chips').append(b);});
+
+  function draw(){
+    const now=Date.now()-3*3600e3;
+    const up=fixtures.filter(r=>new Date(r.kickoff_utc).getTime()+(r.time_tbc?12*3600e3:0)>=now)
+      .sort((a,b)=>a.kickoff_utc<b.kickoff_utc?-1:1);
+    const shown=up.filter(r=>on.has(r.team));
+    const first=shown.find(r=>!r.time_tbc)||shown[0];
+    $('take').textContent=first?`Next up: ${byName[first.team]?.short||first.team} v ${first.opponent}, ${when(first)}. ${shown.length} fixtures listed.`:'Nothing scheduled for the teams selected.';
+
+    const cards=$('cards');cards.replaceChildren();
+    TEAMS.filter(t=>on.has(t.name)).forEach(t=>{
+      const n=up.find(r=>r.team===t.name);const c=el('div','card');c.style.borderTopColor=col(t.name);
+      c.append(el('div','t',t.name));
+      if(n){
+        c.append(el('div','o',`${n.home_away==='H'?'v':'@'} ${n.opponent}`),el('div','w',when(n)));
+        if(watchable(n))c.append(el('div','tag','Before midnight or after 5am'));
+        c.append(el('div','c',`${n.home_away==='H'?'Home':'Away'} · ${n.competition}${n.venue?' · '+n.venue:''}`));
+        if(n.tv)c.append(el('div','tv','📺 '+n.tv));
+      } else c.append(el('div','c','No fixtures listed'));
+      const lr=results.find(r=>r.team===t.name);
+      if(lr)c.append(el('div','l',`Last: ${lr.result} v ${lr.opponent}`));
+      cards.append(c);
+    });
+
+    const body=$('body');body.replaceChildren();let prev='';
+    shown.forEach(r=>{
+      const tr=el('tr');const day=dayF.format(new Date(r.kickoff_utc));
+      if(prev&&day!==prev)tr.classList.add('newday');prev=day;
+      if(r.home_away==='H')tr.classList.add('home');
+      if(watchable(r))tr.classList.add('watch');
+      const t2=el('td');const d=el('span','dot');d.style.background=col(r.team);d.style.marginRight='6px';
+      t2.append(d,document.createTextNode(byName[r.team]?.short||r.team));
+      tr.append(el('td',null,when(r)),t2,el('td',null,r.opponent),el('td',null,r.tv||''),el('td','hide-sm',r.competition));
+      body.append(tr);
+    });
+    if(!shown.length){const tr=el('tr');const td=el('td','err','No fixtures for the teams selected.');td.colSpan=5;tr.append(td);body.append(tr);}
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

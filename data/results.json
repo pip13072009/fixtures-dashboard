@@ -1,0 +1,26 @@
+[
+  {
+    "team": "Chelsea",
+    "date": "2026-10-10",
+    "opponent": "AFC Bournemouth",
+    "home_away": "H",
+    "result": "W 5–1",
+    "source": "Sportradar Premier League schedule"
+  },
+  {
+    "team": "Colorado Avalanche",
+    "date": "2026-10-09",
+    "opponent": "Calgary Flames",
+    "home_away": "A",
+    "result": "W 7–3",
+    "source": "Sportradar NHL schedule"
+  },
+  {
+    "team": "MK Lightning",
+    "date": "2026-10-04",
+    "opponent": "Solway IHC",
+    "home_away": "H",
+    "result": "W 5–4",
+    "source": "https://www.mk-lightning.co.uk/fixtures/"
+  }
+]
