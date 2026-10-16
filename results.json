@@ -1,0 +1,42 @@
+[
+  {
+    "team": "Northampton Saints",
+    "date": "2026-10-10",
+    "opponent": "Bath",
+    "home_away": "H",
+    "result": "W 71–48",
+    "source": "https://www.rugbypass.com/live/bath-vs-northampton/?g=952958"
+  },
+  {
+    "team": "MK Lightning",
+    "date": "2026-10-11",
+    "opponent": "Romford Raiders",
+    "home_away": "A",
+    "result": "L 2–3",
+    "source": "https://www.mk-lightning.co.uk/fixtures/"
+  },
+  {
+    "team": "Colorado Avalanche",
+    "date": "2026-10-14",
+    "opponent": "Dallas Stars",
+    "home_away": "H",
+    "result": "L 2–3",
+    "source": "https://champsorchumps.us/team/nhl/colorado-avalanche/2027"
+  },
+  {
+    "team": "Chelsea",
+    "date": "2026-10-10",
+    "opponent": "AFC Bournemouth",
+    "home_away": "H",
+    "result": "W 5–1",
+    "source": "Sportradar Premier League schedule"
+  },
+  {
+    "team": "Arsenal Women",
+    "date": "2026-10-04",
+    "opponent": "Manchester City",
+    "home_away": "A",
+    "result": "L 2–4",
+    "source": "https://www.goal.com/en-gb/team/arsenal-women/fixtures-results/5rurqie3qt1qav9ir5mkqinn"
+  }
+]
